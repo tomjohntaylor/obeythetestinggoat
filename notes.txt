@@ -1,0 +1,101 @@
+Notatki
+
+2. Extending Our Functional Test Using the unittest Module
+https://www.obeythetestinggoat.com/book/chapter_02_unittest.html
+
+Useful TDD Concepts
+User Story - A description of how the application will work from the point of view of the user. Used to structure a functional test.
+Expected failure - When a test fails in the way that we expected it to.
+
+
+3. Testing a Simple Home Page with Unit Tests
+https://www.obeythetestinggoat.com/book/chapter_unit_test_first_view.html#_unit_testing_a_view
+
+The unit-test/code cycle
+* Run the unit tests in the terminal.
+* Make a minimal code change in the editor.
+* Repeat!
+
+
+4. What Are We Doing with All These Tests? (And, Refactoring)
+https://www.obeythetestinggoat.com/book/chapter_philosophy_and_refactoring.html
+
+5. Saving User Input: Testing the Database
+https://www.obeythetestinggoat.com/book/chapter_post_and_database.html
+
+When a functional test fails with an unexpected failure, there are several things we can do to debug it:
+* Add print statements, to show, for example, what the current page text is.
+* Improve the error message to show more info about the current state.
+* Manually visit the site yourself.
+* Use time.sleep to pause the test during execution.[1]
+Red/Green/Refactor and Triangulation
+Always redirect after a POST
+Each Test Should Test One Thing
+Another awesome Django template tag, forloop.counter `<tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>`
+
+Useful TDD Concepts
+Regression - When new code breaks some aspect of the application which used to work.
+Unexpected failure - When a test fails in a way we weren’t expecting. This either means that we’ve made a mistake in our tests, or that the tests have helped us find a regression, and we need to fix something in our code.
+Red/Green/Refactor - Another way of describing the TDD process. Write a test and see it fail (Red), write some code to get it to pass (Green), then Refactor to improve the implementation.
+Triangulation - Adding a test case with a new specific example for some existing code, to justify generalising the implementation (which may be a "cheat" until that point).
+Three strikes and refactor - A rule of thumb for when to remove duplication from code. When two pieces of code look very similar, it often pays to wait until you see a third use case, so that you’re more sure about what part of the code really is the common, re-usable part to refactor out.
+The scratchpad to-do list - A place to write down things that occur to us as we’re coding, so that we can finish up what we’re doing and come back to them later.
+
+
+6. Improving Functional Tests: Ensuring Isolation and Removing Voodoo Sleeps
+https://www.obeythetestinggoat.com/book/chapter_explicit_waits_1.html
+
+Ensuring test isolation and managing global state - Django’s test runner helps us do this by creating a test database, which it wipes clean in between each test.
+Avoid "voodoo" sleep
+Don’t rely on Selenium’s implicit waits - "Explicit is better than implict", as the Zen of Python says
+
+
+7. Working Incrementally
+https://www.obeythetestinggoat.com/book/chapter_working_incrementally.html
+
+REST suggests that we have a URL structure that matches our data structure, in this case lists and list items. Each list can have its own URL:
+    /lists/<list identifier>/
+To create a brand new list, we’ll have a special URL that accepts POST requests:
+    /lists/new
+To add a new item to an existing list, we’ll have a separate URL, to which we can send POST (better: PUT) requests:
+    /lists/<list identifier>/add_item
+etc...
+
+??? (DLACZEGO) We can definitely delete the test_displays_all_list_items method from HomePageTest; it’s no longer needed. If you run manage.py test lists now, it should say it ran 6 tests instead of 7:
+
+The step-by-step approach, in which you go from working code to working code, is counterintuitive. I always feel like just diving in and trying to fix everything all in one go, instead of going from one weird half-finished state to another. But remember the Testing Goat! When you’re up a mountain, you want to think very carefully about where you put each foot, and take one step at a time, checking at each stage that the place you’ve put it hasn’t caused you to fall off a cliff.
+
+Mozna z listy odwolywac sie bezposrednio do item'ów - dziala jezeli `class Item(models.Model): list = models.ForeignKey(List, default=None)``
+        {% for item in list.item_set.all %}
+            <tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
+        {% endfor %}
+(.item_set is called a reverse lookup. It’s one of Django’s incredibly useful bits of ORM that lets you look up an object’s related items from a different table)
+
+Some More TDD Philosophy:
+Working State to Working State (aka The Testing Goat vs. Refactoring Cat) - Our natural urge is often to dive in and fix everything at once…​but if we’re not careful, we’ll end up like Refactoring Cat, in a situation with loads of changes to our code and nothing working. The Testing Goat encourages us to take one step at a time, and go from working state to working state.
+Split work out into small, achievable tasks - Sometimes this means starting with "boring" work rather than diving straight in with the fun stuff, but you’ll have to trust that YOLO-you in the parallel universe is probably having a bad time, having broken everything, and struggling to get the app working again.
+YAGNI - You ain’t gonna need it! Avoid the temptation to write code that you think might be useful, just because it suggests itself at the time. Chances are, you won’t use it, or you won’t have anticipated your future requirements correctly. See [chapter_outside_in] for one methodology that helps us avoid this trap.
+
+
+Web Development Sine Qua Nons
+https://www.obeythetestinggoat.com/book/part2.harry.html
+
+
+8. Prettification: Layout and Styling, and What to Test About It
+8.1. What to Functionally Test About Layout and Style
+https://www.obeythetestinggoat.com/book/chapter_prettification.html#_what_to_functionally_test_about_layout_and_style
+
+Jumbotron
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+
+Recap: On Testing Design and Layout
+The short answer is: you shouldn’t write tests for design and layout per se. It’s too much like testing a constant, and the tests you write are often brittle.
+With that said, the implementation of design and layout involves something quite tricky: CSS and static files. As a result, it is valuable to have some kind of minimal "smoke test" which checks that your static files and CSS are working. As we’ll see in the next chapter, it can help pick up problems when you deploy your code to production.
+Similarly, if a particular piece of styling required a lot of client-side JavaScript code to get it to work (dynamic resizing is one I’ve spent a bit of time on), you’ll definitely want some tests for that.
+Try to write the minimal tests that will give you confidence that your design and layout is working, without testing what it actually is. Aim to leave yourself in a position where you can freely make changes to the design and layout, without having to go back and adjust tests all the time.
+
+
+9. Testing Deployment Using a Staging Site
+https://www.obeythetestinggoat.com/book/chapter_manual_deployment.html
+
+Getting a Domain Name!!!
