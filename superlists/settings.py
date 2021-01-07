@@ -25,7 +25,7 @@ SECRET_KEY = '01di_u(j(l3h3*#*hb(^=l^l1xslr&sd&1-f*wk&8lc7v50%ng'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.51.20.62', 'tj-t.com']
+ALLOWED_HOSTS = ['otg.tj-t.com']
 
 
 # Application definition
