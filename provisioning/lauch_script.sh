@@ -53,9 +53,9 @@ runuser -l  ubuntu -c 'git clone https://github.com/tomjohntaylor/obeythetesting
 runuser -l  ubuntu -c 'cd ~/sites/$SITENAME; git pull'
 
 # site environment variables to .env file 
-echo DJANGO_DEBUG_FALSE=y >> ~/sites/$SITENAME/.env'
-echo SITENAME=$SITENAME >> ~/sites/$SITENAME/.env'
-echo DJANGO_SECRET_KEY  >> ~/sites/$SITENAME/.env'
+runuser -l  ubuntu -c 'echo "DJANGO_DEBUG_FALSE=y" >> ~/sites/$SITENAME/.env'
+runuser -l  ubuntu -c 'echo "SITENAME=$SITENAME" >> ~/sites/$SITENAME/.env'
+runuser -l  ubuntu -c 'echo "DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY"  >> ~/sites/$SITENAME/.env'
 
 # virtualenv setup
 runuser -l  ubuntu -c 'virtualenv ~/sites/$SITENAME/virtualenv --python=python3.7'
@@ -66,8 +66,29 @@ runuser -l  ubuntu -c '~/sites/$SITENAME/virtualenv/bin/python ~/sites/$SITENAME
 runuser -l  ubuntu -c '~/sites/$SITENAME/virtualenv/bin/python ~/sites/$SITENAME/manage.py migrate --noinput'
 runuser -l  ubuntu -c '~/sites/$SITENAME/virtualenv/bin/python ~/sites/$SITENAME/manage.py collectstatic --noinput'
 
+# # server start
+# nohup runuser -l  ubuntu -c 'cd ~/sites/$SITENAME; ./virtualenv/bin/gunicorn --bind unix:/tmp/otg.tj-t.com.socket superlists.wsgi:application' &
+# systemctl reload nginx
+
+# service systemd registration
+bash -c 'echo "[Unit]" >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "Description=Gunicorn server for otg.tj-t.com" >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "" >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "[Service]" >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "Restart=on-failure  " >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "User=ubuntu  " >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "WorkingDirectory=/home/ubuntu/sites/otg.tj-t.com  " >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "EnvironmentFile=/home/ubuntu/sites/otg.tj-t.com/.env  " >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "" >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "ExecStart=/home/ubuntu/sites/otg.tj-t.com/virtualenv/bin/gunicorn --bind unix:/tmp/otg.tj-t.com.socket superlists.wsgi:application" >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "" >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "[Install]" >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+bash -c 'echo "WantedBy=multi-user.target " >> /etc/systemd/system/gunicorn-superlists-otg.tj-t.com.service'
+
 # server start
-nohup runuser -l  ubuntu -c 'cd ~/sites/$SITENAME; ./virtualenv/bin/gunicorn --bind unix:/tmp/otg.tj-t.com.socket superlists.wsgi:application' &
+systemctl daemon-reload
+systemctl enable gunicorn-superlists-otg.tj-t.com
+systemctl start gunicorn-superlists-otg.tj-t.com
 systemctl reload nginx
 
 # EOF
