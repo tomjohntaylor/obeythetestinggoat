@@ -20,7 +20,7 @@ echo "export SITENAME=otg.tj-t.com" >> /etc/profile
 # rm /var/lib/apt/lists/lock
 # rm /var/cache/apt/archives/lock
 # rm /var/lib/dpkg/lock
-sleep 10s # need because of "Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend)" issues
+sleep 15s # need because of "Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend)" issues
 apt-get --yes update
 apt-get --yes install python3.7 git virtualenv nginx
 
@@ -37,6 +37,7 @@ bash -c 'echo "    }" >> /etc/nginx/sites-available/otg.tj-t.com'
 bash -c 'echo "" >> /etc/nginx/sites-available/otg.tj-t.com'
 bash -c 'echo "    location / {" >> /etc/nginx/sites-available/otg.tj-t.com'
 bash -c 'echo "        proxy_pass http://unix:/tmp/otg.tj-t.com.socket;" >> /etc/nginx/sites-available/otg.tj-t.com'
+bash -c 'echo "        proxy_set_header Host \$host;" >> /etc/nginx/sites-available/otg.tj-t.com'
 bash -c 'echo "    }" >> /etc/nginx/sites-available/otg.tj-t.com'
 bash -c 'echo "}" >> /etc/nginx/sites-available/otg.tj-t.com'
 
