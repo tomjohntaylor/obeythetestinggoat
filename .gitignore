@@ -1,6 +1,7 @@
 db.sqlite3
 geckodriver*
 venv
+virtualenv
 __pycache__
 *.pyc
 .idea
