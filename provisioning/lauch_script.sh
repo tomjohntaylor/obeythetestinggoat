@@ -14,7 +14,7 @@ service sshd restart
 
 # SITE CONFIGURATION
 SITENAME="otg.tj-t.com"
-# echo "export SITENAME="otg.tj-t.com"" >> /etc/profile
+echo "export SITENAME=otg.tj-t.com" >> /etc/profile
 
 # packages
 # rm /var/lib/apt/lists/lock
@@ -36,7 +36,7 @@ bash -c 'echo "        alias /home/ubuntu/sites/otg.tj-t.com/static;" >> /etc/ng
 bash -c 'echo "    }" >> /etc/nginx/sites-available/otg.tj-t.com'
 bash -c 'echo "" >> /etc/nginx/sites-available/otg.tj-t.com'
 bash -c 'echo "    location / {" >> /etc/nginx/sites-available/otg.tj-t.com'
-bash -c 'echo "        proxy_pass http://localhost:8000;" >> /etc/nginx/sites-available/otg.tj-t.com'
+bash -c 'echo "        proxy_pass http://unix:/tmp/otg.tj-t.com.socket;" >> /etc/nginx/sites-available/otg.tj-t.com'
 bash -c 'echo "    }" >> /etc/nginx/sites-available/otg.tj-t.com'
 bash -c 'echo "}" >> /etc/nginx/sites-available/otg.tj-t.com'
 
@@ -51,11 +51,13 @@ runuser -l  ubuntu -c 'cd ~/sites/$SITENAME; git pull'
 runuser -l  ubuntu -c 'virtualenv ~/sites/$SITENAME/virtualenv --python=python3.7'
 runuser -l  ubuntu -c '~/sites/$SITENAME/virtualenv/bin/pip install -r ~/sites/$SITENAME/requirements.txt'
 
-# static files collection
+# migration & static files collection
+runuser -l  ubuntu -c '~/sites/$SITENAME/virtualenv/bin/python ~/sites/$SITENAME/manage.py makemigrations --noinput'
+runuser -l  ubuntu -c '~/sites/$SITENAME/virtualenv/bin/python ~/sites/$SITENAME/manage.py migrate --noinput'
 runuser -l  ubuntu -c '~/sites/$SITENAME/virtualenv/bin/python ~/sites/$SITENAME/manage.py collectstatic --noinput'
 
 # server start
-runuser -l  ubuntu -c 'cd ~/sites/$SITENAME; ./virtualenv/bin/gunicorn superlists.wsgi:application'
+nohup runuser -l  ubuntu -c 'cd ~/sites/$SITENAME; ./virtualenv/bin/gunicorn --bind unix:/tmp/otg.tj-t.com.socket superlists.wsgi:application' &
 systemctl reload nginx
 
 # EOF
@@ -72,7 +74,7 @@ sudo bash -c 'echo "        alias /home/ubuntu/sites/otg.tj-t.com/static;" >> /e
 sudo bash -c 'echo "    }" >> /etc/nginx/sites-available/otg.tj-t.com'
 sudo bash -c 'echo "" >> /etc/nginx/sites-available/otg.tj-t.com'
 sudo bash -c 'echo "    location / {" >> /etc/nginx/sites-available/otg.tj-t.com'
-sudo bash -c 'echo "        proxy_pass http://localhost:8000;" >> /etc/nginx/sites-available/otg.tj-t.com'
+sudo bash -c 'echo "        proxy_pass http://unix:/tmp/otg.tj-t.com.socket;'
 sudo bash -c 'echo "    }" >> /etc/nginx/sites-available/otg.tj-t.com'
 sudo bash -c 'echo "}" >> /etc/nginx/sites-available/otg.tj-t.com'
 
