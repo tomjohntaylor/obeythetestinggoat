@@ -1,0 +1,13 @@
+server {
+    listen 80;
+    server_name otg.tj-t.com;
+
+    location /static {
+        alias /home/ubuntu/sites/otg.tj-t.com/static;
+    }
+
+    location / {
+        proxy_pass http://unix:/tmp/otg.tj-t.com.socket;
+        proxy_set_header Host $host;
+    }
+}

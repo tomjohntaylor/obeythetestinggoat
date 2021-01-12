@@ -1,6 +1,9 @@
 #!/bin/bash
 
 ###############
+# Script for IaaC
+# Made for execute after virtual operating system is instantieted. 
+#
 # Data
 # OS: Ubuntu 18.04 LTS
 ################
@@ -16,9 +19,9 @@ service sshd restart
 SITENAME="otg.tj-t.com"
 DJANGO_DEBUG_FALSE="y"
 DJANGO_SECRET_KEY=$(python3 -c "import random; print(\"\".join(random.SystemRandom().choices(\"abcdefghijklmnopqrstuvwxyz0123456789\", k=50)))")
-echo "export SITENAME=$SITENAME" >> /etc/profile
-echo "export DJANGO_DEBUG_FALSE=y" >> /etc/profile
-echo "export DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY" >> /etc/profile
+# echo "export SITENAME=$SITENAME" >> /etc/profile
+# echo "export DJANGO_DEBUG_FALSE=y" >> /etc/profile
+# echo "export DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY" >> /etc/profile
 
 # packages
 # rm /var/lib/apt/lists/lock

@@ -1,0 +1,72 @@
+---
+- block:
+  - name: ensure nginx is at the latest version
+    apt:
+      name:
+        - nginx
+        - python3.7
+        - git
+        - virtualenv
+      update_cache: yes
+  - name: write the nginx config file
+    template:
+      src: nginx_config.j2
+      dest: "/etc/nginx/sites-available/{{ playbook_vars.domain_name }}"
+  - name: Create a symbolic link
+    file:
+      src: "/etc/nginx/sites-available/{{ playbook_vars.domain_name }}"
+      dest: "/etc/nginx/sites-enabled/{{ playbook_vars.domain_name }}"
+      state: link
+  - name: Delete default nginx symbolic link
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+  become: yes
+
+- block:
+  - name: Git checkout
+    git:
+      repo: "{{ playbook_vars.git_url }}"
+      dest: "~/sites/{{ playbook_vars.domain_name }}"
+  - name: Install specified python requirements in indicated (virtualenv)
+    pip:
+      requirements: "~/sites/{{ playbook_vars.domain_name }}/requirements.txt"
+      virtualenv: "~/sites/{{ playbook_vars.domain_name }}/venv"
+      virtualenv_python: python3.7
+  - name: write the nginx config file
+    template:
+      src: .env.j2
+      dest: "~/sites/{{ playbook_vars.domain_name }}/.env"
+  - name: Run cleanup on the application installed in django_dir
+    shell: venv/bin/python3.7 manage.py makemigrations --noinput
+    args:
+      chdir: "~/sites/{{ playbook_vars.domain_name }}"
+  - name: Run cleanup on the application installed in django_dir
+    shell: venv/bin/python3.7 manage.py migrate --noinput
+    args:
+      chdir: "~/sites/{{ playbook_vars.domain_name }}"
+  - name: Run cleanup on the application installed in django_dir
+    shell: venv/bin/python3.7 manage.py collectstatic --noinput
+    args:
+      chdir: "~/sites/{{ playbook_vars.domain_name }}"
+  become_user: "{{ playbook_vars.app_os_user }}"
+
+- block:
+  - name: write the nginx config file
+    template:
+      src: gunicorn.service.j2
+      dest: "/etc/systemd/system/gunicorn-superlists-{{ playbook_vars.domain_name }}.service"
+  - name: Enable service httpd and ensure it is not masked
+    systemd:
+      name: gunicorn-superlists-otg.tj-t.com
+      enabled: yes
+      daemon_reload: yes
+  - name: Enable service httpd and ensure it is not masked
+    systemd:
+      name: gunicorn-superlists-otg.tj-t.com
+      state: restarted
+  - name: Make sure a nginx is running
+    systemd:
+      state: restarted
+      name: nginx
+  become: yes

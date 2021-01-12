@@ -1,0 +1,7 @@
+---
+- name: Provision webserver
+  hosts: webservers
+  remote_user: "{{ playbook_vars.app_os_user }}"
+  roles:
+  - main
+  environment: "{{ env_vars }}"

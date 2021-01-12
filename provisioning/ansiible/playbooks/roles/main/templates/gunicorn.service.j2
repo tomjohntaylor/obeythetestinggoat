@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn server for otg.tj-t.com
+
+[Service]
+Restart=on-failure
+User=ubuntu
+WorkingDirectory=/home/ubuntu/sites/otg.tj-t.com
+EnvironmentFile=/home/ubuntu/sites/otg.tj-t.com/.env
+
+ExecStart=/home/ubuntu/sites/otg.tj-t.com/venv/bin/python3.7 /home/ubuntu/sites/otg.tj-t.com/venv/bin/gunicorn --bind unix:/tmp/otg.tj-t.com.socket superlists.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
