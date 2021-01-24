@@ -7,4 +7,4 @@ __pycache__
 .idea
 /static
 .env
-provisioning/ansible/inventory/*
+/provisioning/ansiible/inventory/
