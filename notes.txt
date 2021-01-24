@@ -99,14 +99,19 @@ Try to write the minimal tests that will give you confidence that your design an
 https://www.obeythetestinggoat.com/book/chapter_manual_deployment.html
 
 Getting a Domain Name!!!
+DONE tj-t.com / otg.tj-t.com
 
 10. Getting to a Production-Ready Deployment
-Ogarniete w AWS
+AWS
+DONE
 
 11. Automating Deployment with Fabric
 AWS Launch template + ANSIBLE
+DONE
 
 12. Splitting Our Tests into Multiple Files, and a Generic Wait Helper
 Don’t Forget the "Refactor" in "Red, Green, Refactor"
 - jezeli mamy cos do refactoringu nalezy dokonywac go tylko w przypadku gdy mamy "dzialajacy kod" - jezeli mamy jakies testy ktore nie przechodza poprawnie lepiej je dokonczyc a dopiero potem wykonac refactoring wczesniej zauwazonej rzeczy
+
+!!! Explicit and generic "wait_for" function with lambda !!!
 
